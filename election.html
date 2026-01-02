@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>निर्वाचन आयोग नेपाल | Election System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+*{box-sizing:border-box;font-family:Segoe UI}
+body{
+  margin:0;
+  background: linear-gradient(to right, #e0f7fa, #80deea);
+}
+
+/* HEADER */
+header{
+ background:linear-gradient(to right,#005bbb,#002f6c);
+ color:white;
+ text-align:center;
+ padding:20px;
+ font-size:32px;
+ border-bottom: 4px solid #004080;
+}
+
+/* NAV */
+nav{
+ display:flex;
+ justify-content:center;
+ background:#111;
+}
+nav a{
+ color:white;
+ padding:14px 25px;
+ text-decoration:none;
+ cursor:pointer;
+}
+nav a:hover{background:red}
+
+/* SECTION */
+.section{display:none;padding:30px}
+.active{display:block}
+
+/* CARD */
+.card{
+ background:white;
+ max-width:1200px;
+ margin:auto;
+ padding:25px;
+ border-radius:15px;
+ box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
+
+/* CANDIDATES */
+.candidates{
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:center;
+}
+.candidate{
+ width:260px;
+ margin:15px;
+ padding:15px;
+ background:#f4f4f4;
+ border-radius:15px;
+ text-align:center;
+ box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+.candidate img{
+ width:150px;
+ height:150px;
+ border-radius:50%;
+}
+
+/* INPUT */
+input{
+ width:100%;
+ padding:10px;
+ margin:8px 0;
+ border:1px solid #ccc;
+ border-radius:5px;
+}
+
+/* BUTTON */
+button{
+ background:#002f6c;
+ color:white;
+ border:none;
+ padding:10px 25px;
+ cursor:pointer;
+ border-radius:5px;
+ font-weight:bold;
+}
+button:hover{background:red}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ccc;padding:8px;text-align:center}
+th{background:#eee}
+
+footer{
+ background:black;
+ color:white;
+ text-align:center;
+ padding:15px;
+ margin-top:30px;
+}
+</style>
+</head>
+
+<body>
+
+<header>निर्वाचन आयोग नेपाल</header>
+
+<marquee style="background:#004080;color:white;padding:10px">
+"निर्वाचन आयोग: लोकतन्त्रको सुनिश्चितता, पारदर्शिता र जनताको विश्वासका लागि निष्पक्ष मतदानको प्रत्याभूति"
+</marquee>
+
+<nav>
+<a onclick="show('home')">Home</a>
+<a onclick="show('vote')">Vote</a>
+<a onclick="show('admin')">Admin</a>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="section active">
+<div class="card">
+<h2>About Election Commission</h2>
+<p>
+निर्वाचन आयोग नेपाल निष्पक्ष, स्वतन्त्र र पारदर्शी निर्वाचन
+सञ्चालन गर्न जिम्मेवार संवैधानिक निकाय हो।
+</p>
+
+<h2>Election Posts</h2>
+<ul>
+<li>President</li>
+<li>Vice President</li>
+<li>Mayor</li>
+</ul>
+</div>
+</section>
+
+<!-- VOTE -->
+<section id="vote" class="section">
+<div class="card">
+
+<h2>Voter Login</h2>
+<input id="vid" placeholder="Voter ID">
+<input id="vname" placeholder="Full Name">
+<input id="vaddress" placeholder="Address">
+<input id="vcenter" placeholder="Voting Center">
+
+<hr>
+
+<h2>President Candidates</h2>
+<div class="candidates">
+<div class="candidate">
+<img src="candidate1.jpeg">
+<h3>Balendra Shah</h3>
+<p>Post: Prime Minister</p>
+<button onclick="vote('Prime Minister','Balendra Shah')">Vote</button>
+</div>
+
+<div class="candidate">
+<img src="candidate2.webp">
+<h3>Kp Sharma Olii</h3>
+<p>Post: Prime Minsster</p>
+<button onclick="vote('Prime Minister','Kp Shrma Olii ')">Vote</button>
+</div>
+</div>
+
+<h2>Mayor Candidates</h2>
+<div class="candidates">
+<div class="candidate">
+<img src="candidate3.webp">
+<h3>Rabi Lamichane</h3>
+<p>Post: voice-PrimeMinister</p>
+<button onclick="vote('voice-PrimeMinister','Rabi Lamichane')">Vote</button>
+</div>
+
+<div class="candidate">
+<img src="candidate4.jfif">
+<h3>Sher Badur Deuba </h3>
+<p>Post: Mayor</p>
+<button onclick="vote('voice-PrimeMinister','Gita Rai')">Vote</button>
+</div>
+</div>
+
+<p id="msg"></p>
+</div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin" class="section">
+<div class="card">
+<h2>Admin Panel</h2>
+<input id="apass" placeholder="Admin Password">
+<button onclick="adminLogin()">Login</button>
+<button onclick="loadResult()" style="margin-left:10px;">Refresh</button>
+
+<div id="adminArea" style="display:none">
+
+<h3>Total Votes</h3>
+<table>
+<thead>
+<tr><th>Post</th><th>Candidate</th><th>Votes</th></tr>
+</thead>
+<tbody id="result"></tbody>
+</table>
+
+<h3>Winners (Highest Vote per Post)</h3>
+<ul id="winners"></ul>
+
+</div>
+</div>
+</section>
+
+<footer>
+© 2026 Election Commission Nepal | BCA Project
+</footer>
+
+<script>
+let votes={}, voterPosts={};
+
+function show(id){
+ document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+}
+
+function vote(post,name){
+ let vidValue=vid.value.trim();
+ if(!vidValue || !vname.value || !vaddress.value || !vcenter.value){
+   msg.innerText="All voter details including Voter ID are required";
+   return;
+ }
+ // one vote per post per voter
+ if(!voterPosts[vidValue]) voterPosts[vidValue]={};
+ if(voterPosts[vidValue][post]){
+   msg.innerText="You have already voted for "+post;
+   return;
+ }
+ let key=post+"-"+name;
+ votes[key]=(votes[key]||0)+1;
+ voterPosts[vidValue][post]=name;
+ msg.innerText="Vote submitted successfully";
+}
+
+function adminLogin(){
+ if(apass.value==="admin123"){
+   adminArea.style.display="block";
+   loadResult();
+ }else alert("Wrong Admin Password");
+}
+
+function loadResult(){
+ let resHTML="";
+ let postMap={};
+
+ for(let k in votes){
+   let [post,name]=k.split("-");
+   resHTML+=`<tr><td>${post}</td><td>${name}</td><td>${votes[k]}</td></tr>`;
+   if(!postMap[post] || votes[k]>postMap[post].votes){
+     postMap[post]={name,votes:votes[k]};
+   }
+ }
+
+ result.innerHTML=resHTML;
+
+ winners.innerHTML="";
+ for(let p in postMap){
+   winners.innerHTML+=`<li>${p} Winner: <b>${postMap[p].name}</b> (${postMap[p].votes} votes)</li>`;
+ }
+}
+</script>
+
+</body>
+</html>
